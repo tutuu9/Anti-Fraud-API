@@ -1,14 +1,12 @@
 import express from 'express';
+import healthRoutes from './routes/health.routes';
+import eventRoutes from './routes/event.routes';
 
 const app = express();
 
 app.use(express.json());
 
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    message: 'Anti-Fraud API is running'
-  });
-});
+app.use(healthRoutes);
+app.use(eventRoutes);
 
 export default app;

@@ -16,3 +16,7 @@ export const createEvent = (data: CreateEventData): UserEvent => {
 
     return newEvent;
 };
+
+export const getEvents = (): UserEvent[] => {
+    return events;
+};

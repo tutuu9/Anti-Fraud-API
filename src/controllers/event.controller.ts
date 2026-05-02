@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createEvent } from '../services/event.service';
+import { createEvent, getEvents } from '../services/event.service';
 
 export const createEventController = (req: Request, res: Response) => {
     const data = req.body;
@@ -11,4 +11,14 @@ export const createEventController = (req: Request, res: Response) => {
         data: event
     });
 
+};
+
+export const getEventsController = (req: Request, res: Response) => {
+    const events = getEvents();
+    
+    res.status(200).json({
+        status: 'success',
+        results: events.length,
+        data: events
+    })
 };

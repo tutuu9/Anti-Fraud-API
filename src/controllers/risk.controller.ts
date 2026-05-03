@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { calculateUserRisk } from '../services/risk.service';
 
-export const getUserRiskController = async (req: Request, res: Response) => {
+export const getUserRiskController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = req.params.userId as string;
 
@@ -12,9 +12,6 @@ export const getUserRiskController = async (req: Request, res: Response) => {
             data: risk
         });
     } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: 'Failed to calculate user risk'
-        });
+        next(error);
     }
 };

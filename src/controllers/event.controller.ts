@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { createEvent, getEvents } from '../services/event.service';
 
-export const createEventController = async (req: Request, res: Response) => {
+export const createEventController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = req.body;
 
@@ -12,14 +12,11 @@ export const createEventController = async (req: Request, res: Response) => {
             data: event
         });
     } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: 'Failed to create event'
-        });
+        next(error);
     }
 };
 
-export const getEventsController = async (req: Request, res: Response) => {
+export const getEventsController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const events = await getEvents();
 
@@ -29,9 +26,6 @@ export const getEventsController = async (req: Request, res: Response) => {
             data: events
         });
     } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: 'Failed to get events'
-        });
+        next(error);
     }
 };

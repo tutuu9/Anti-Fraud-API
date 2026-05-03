@@ -20,3 +20,9 @@ export const createEvent = (data: CreateEventData): UserEvent => {
 export const getEvents = (): UserEvent[] => {
     return events;
 };
+
+export const getEventsByUserId = (userId: string): UserEvent[] => {
+    return events.filter(event => {
+        return event.userId === userId;
+    });
+};

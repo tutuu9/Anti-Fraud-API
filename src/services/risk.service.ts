@@ -1,4 +1,5 @@
 import { getEventsByUserId, getRecentEventsByUserId } from './event.service';
+import { isSuspiciousIp } from './ipRisk.service';
 
 export const calculateUserRisk = (userId: string) => {
     const events = getEventsByUserId(userId);
@@ -22,10 +23,17 @@ export const calculateUserRisk = (userId: string) => {
     if (recentEventsCount >= 5) {
         riskScore = Math.max(riskScore, 70);
     }
+    const hasSuspiciousIp = events.some((event) => {
+        return isSuspiciousIp(event.ip);
+    });
+    if (hasSuspiciousIp) {
+        riskScore = Math.max(riskScore, 60);
+    }
     return {
         userId,
         eventsCount,
-        riskScore,
-        recentEventsCount
+        recentEventsCount,
+        hasSuspiciousIp,
+        riskScore
     };
 };

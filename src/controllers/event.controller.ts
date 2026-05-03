@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { createEvent, getEvents, getEventsByUserId } from '../services/event.service';
+import { createEvent, getEvents, getEventsByUserId, countEvents } from '../services/event.service';
 
 export const createEventController = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -20,9 +20,18 @@ export const getEventsController = async (req: Request, res: Response, next: Nex
     try {
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 10;
+
+        const totalEvents = await countEvents();
+        const totalPages = Math.ceil(totalEvents / limit);
+        
         const events = await getEvents(page, limit);
+
         res.status(200).json({
             status: 'success',
+            page,
+            limit,
+            totalEvents,
+            totalPages,
             results: events.length,
             data: events
         });

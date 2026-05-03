@@ -29,6 +29,10 @@ export const getEvents = async (page: number, limit: number) => {
     });
 };
 
+export const countEvents = async () => {
+    return prisma.event.count();
+};
+
 export const getEventsByUserId = async (userId: string) => {
     return prisma.event.findMany({
         where: {

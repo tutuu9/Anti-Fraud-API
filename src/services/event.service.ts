@@ -3,9 +3,6 @@ import { prisma } from '../config/prisma';
 
 type CreateEventData = Omit<UserEvent, 'id' | 'createdAt'>;
 
-//later to change PostreSQL and Prisma
-const events: UserEvent[] = [];
-
 export const createEvent = async (data: CreateEventData) => {
   const newEvent = await prisma.event.create({
     data: {
@@ -28,23 +25,28 @@ export const getEvents = async () => {
     });
 };
 
-export const getEventsByUserId = (userId: string): UserEvent[] => {
-    return events.filter(event => {
-        return event.userId === userId;
+export const getEventsByUserId = async (userId: string) => {
+    return prisma.event.findMany({
+        where: {
+            userId
+        }
     });
 };
 
-export const getRecentEventsByUserId = (
+export const getRecentEventsByUserId = async (
     userId: string,
     minutes: number
-): UserEvent[] => {
-    const now = Date.now();
+) => {
+    const now = new Date();
     const timeWindow = minutes * 60 * 1000;
+    const fromDate = new Date(now.getTime() - timeWindow);
 
-    return events.filter(event => {
-        return (
-            event.userId === userId &&
-            event.createdAt.getTime() >= now - timeWindow
-        );
+    return prisma.event.findMany({
+        where: {
+            userId,
+            createdAt: {
+                gte: fromDate
+            }
+        }
     });
 };

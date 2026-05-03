@@ -2,10 +2,10 @@ import { getEventsByUserId, getRecentEventsByUserId } from './event.service';
 import { isSuspiciousIp } from './ipRisk.service';
 import { RISK_CONFIG } from '../config/risk.config';
 
-export const calculateUserRisk = (userId: string) => {
-    const events = getEventsByUserId(userId);
+export const calculateUserRisk = async (userId: string) => {
+    const events = await getEventsByUserId(userId);
     const eventsCount = events.length;
-    const recentEvents = getRecentEventsByUserId(userId, RISK_CONFIG.recentActivityWindowMinutes);
+    const recentEvents = await getRecentEventsByUserId(userId, RISK_CONFIG.recentActivityWindowMinutes);
     const recentEventsCount = recentEvents.length;
     let riskScore = 0;
     const reasons: string[] = [];

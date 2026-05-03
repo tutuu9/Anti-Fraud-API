@@ -1,10 +1,11 @@
 import { getEventsByUserId, getRecentEventsByUserId } from './event.service';
 import { isSuspiciousIp } from './ipRisk.service';
+import { RISK_CONFIG } from '../config/risk.config';
 
 export const calculateUserRisk = (userId: string) => {
     const events = getEventsByUserId(userId);
     const eventsCount = events.length;
-    const recentEvents = getRecentEventsByUserId(userId, 1);
+    const recentEvents = getRecentEventsByUserId(userId, RISK_CONFIG.recentActivityWindowMinutes);
     const recentEventsCount = recentEvents.length;
     let riskScore = 0;
     const reasons: string[] = [];
@@ -14,19 +15,19 @@ export const calculateUserRisk = (userId: string) => {
         reasons.push('Zero activity in short time window');
     }
     if (eventsCount <= 3 && eventsCount >= 1) {
-        riskScore = 20;
+        riskScore = RISK_CONFIG.scores.lowActivity;
         reasons.push('Low activity in short time window');
     }
     if (eventsCount <= 6 && eventsCount >= 4) {
-        riskScore = 50;
+        riskScore = RISK_CONFIG.scores.mediumActivity;
         reasons.push('Medium activity in short time window');
     }
     if (eventsCount >= 7) {
-        riskScore = 80;
+        riskScore = RISK_CONFIG.scores.highActivity;
         reasons.push('High total event count');
     }
-    if (recentEventsCount >= 5) {
-        riskScore = Math.max(riskScore, 70);
+    if (recentEventsCount >= RISK_CONFIG.highRecentActivityCount) {
+        riskScore = Math.max(riskScore, RISK_CONFIG.scores.highRecentActivity);
         reasons.push('High activity in short time window');
     }
     const hasSuspiciousIp = events.some((event) => {
@@ -34,10 +35,10 @@ export const calculateUserRisk = (userId: string) => {
     });
 
     if (hasSuspiciousIp) {
-        riskScore = Math.max(riskScore, 60);
+        riskScore = Math.max(riskScore, RISK_CONFIG.scores.suspiciousIp);
         reasons.push('Suspicious IP detected');
     }
-    
+
     return {
         userId,
         eventsCount,

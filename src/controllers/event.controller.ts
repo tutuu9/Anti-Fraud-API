@@ -12,8 +12,8 @@ export const createEventController = async (req: Request, res: Response) => {
     });
 };
 
-export const getEventsController = (req: Request, res: Response) => {
-    const events = getEvents();
+export const getEventsController = async (req: Request, res: Response) => {
+    const events = await getEvents();
 
     res.status(200).json({
         status: 'success',

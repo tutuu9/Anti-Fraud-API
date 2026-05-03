@@ -20,8 +20,12 @@ export const createEvent = async (data: CreateEventData) => {
   return newEvent;
 };
 
-export const getEvents = (): UserEvent[] => {
-    return events;
+export const getEvents = async () => {
+    return prisma.event.findMany({
+        orderBy: {
+            createdAt: 'desc'
+        }
+    });
 };
 
 export const getEventsByUserId = (userId: string): UserEvent[] => {

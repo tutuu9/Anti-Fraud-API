@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { createEvent, getEvents } from '../services/event.service';
 
-export const createEventController = (req: Request, res: Response) => {
+export const createEventController = async (req: Request, res: Response) => {
     const data = req.body;
 
-    const event = createEvent(data);
+    const event = await createEvent(data);
 
     res.status(201).json({
         status: 'success',
@@ -19,5 +19,5 @@ export const getEventsController = (req: Request, res: Response) => {
         status: 'success',
         results: events.length,
         data: events
-    })
+    });
 };

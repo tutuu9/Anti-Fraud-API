@@ -1,20 +1,23 @@
 import { UserEvent } from '../types/event.types';
+import { prisma } from '../config/prisma';
 
 type CreateEventData = Omit<UserEvent, 'id' | 'createdAt'>;
 
 //later to change PostreSQL and Prisma
 const events: UserEvent[] = [];
 
-export const createEvent = (data: CreateEventData): UserEvent => {
-    const newEvent: UserEvent = {
-        id: Date.now().toString(),
-        ...data,
-        createdAt: new Date()
-    };
+export const createEvent = async (data: CreateEventData) => {
+  const newEvent = await prisma.event.create({
+    data: {
+      userId: data.userId,
+      type: data.type,
+      ip: data.ip,
+      email: data.email,
+      phone: data.phone
+    }
+  });
 
-    events.push(newEvent);
-
-    return newEvent;
+  return newEvent;
 };
 
 export const getEvents = (): UserEvent[] => {

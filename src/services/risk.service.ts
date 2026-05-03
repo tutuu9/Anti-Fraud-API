@@ -16,16 +16,19 @@ export const calculateUserRisk = (userId: string) => {
     }
     if (eventsCount <= 3 && eventsCount >= 1) {
         riskScore = RISK_CONFIG.scores.lowActivity;
-        reasons.push('Low activity in short time window');
+        reasons.push('Low total event count');
     }
+
     if (eventsCount <= 6 && eventsCount >= 4) {
         riskScore = RISK_CONFIG.scores.mediumActivity;
-        reasons.push('Medium activity in short time window');
+        reasons.push('Medium total event count');
     }
+
     if (eventsCount >= 7) {
         riskScore = RISK_CONFIG.scores.highActivity;
         reasons.push('High total event count');
     }
+
     if (recentEventsCount >= RISK_CONFIG.highRecentActivityCount) {
         riskScore = Math.max(riskScore, RISK_CONFIG.scores.highRecentActivity);
         reasons.push('High activity in short time window');

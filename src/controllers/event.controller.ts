@@ -18,8 +18,9 @@ export const createEventController = async (req: Request, res: Response, next: N
 
 export const getEventsController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const events = await getEvents();
-
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const events = await getEvents(page, limit);
         res.status(200).json({
             status: 'success',
             results: events.length,

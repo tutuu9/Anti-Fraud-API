@@ -4,21 +4,25 @@ import { prisma } from '../config/prisma';
 type CreateEventData = Omit<UserEvent, 'id' | 'createdAt'>;
 
 export const createEvent = async (data: CreateEventData) => {
-  const newEvent = await prisma.event.create({
-    data: {
-      userId: data.userId,
-      type: data.type,
-      ip: data.ip,
-      email: data.email,
-      phone: data.phone
-    }
-  });
+    const newEvent = await prisma.event.create({
+        data: {
+            userId: data.userId,
+            type: data.type,
+            ip: data.ip,
+            email: data.email,
+            phone: data.phone
+        }
+    });
 
-  return newEvent;
+    return newEvent;
 };
 
-export const getEvents = async () => {
+export const getEvents = async (page: number, limit: number) => {
+    const skip = (page - 1) * limit;
+
     return prisma.event.findMany({
+        skip,
+        take: limit,
         orderBy: {
             createdAt: 'desc'
         }
@@ -50,3 +54,4 @@ export const getRecentEventsByUserId = async (
         }
     });
 };
+

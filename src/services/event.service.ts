@@ -26,3 +26,18 @@ export const getEventsByUserId = (userId: string): UserEvent[] => {
         return event.userId === userId;
     });
 };
+
+export const getRecentEventsByUserId = (
+    userId: string,
+    minutes: number
+): UserEvent[] => {
+    const now = Date.now();
+    const timeWindow = minutes * 60 * 1000;
+
+    return events.filter(event => {
+        return (
+            event.userId === userId &&
+            event.createdAt.getTime() >= now - timeWindow
+        );
+    });
+};

@@ -1,4 +1,4 @@
-import { getEventsByUserId, getRecentEventsByUserId } from './event.service';
+import { getEventsByUserId, getRecentEventsByUserId, countUniqueUsersByIp } from './event.service';
 import { isSuspiciousIp } from './ipRisk.service';
 import { RISK_CONFIG } from '../config/risk.config';
 
@@ -42,12 +42,26 @@ export const calculateUserRisk = async (userId: string) => {
         reasons.push('Suspicious IP detected');
     }
 
+
+    const uniqueIps = Array.from(new Set(events.map(event => event.ip)));
+    let maxUsersFromSameIp = 0;
+    for (const ip of uniqueIps) {
+        const usersCount = await countUniqueUsersByIp(ip);
+        maxUsersFromSameIp = Math.max(maxUsersFromSameIp, usersCount);
+    }
+    if (maxUsersFromSameIp >= RISK_CONFIG.highSharedIpUsersCount) {
+        riskScore = Math.max(riskScore, RISK_CONFIG.scores.sharedIp);
+        reasons.push('Multiple users from same IP');
+    }
+
+
     return {
         userId,
         eventsCount,
         recentEventsCount,
         hasSuspiciousIp,
         riskScore,
-        reasons
+        reasons,
+        maxUsersFromSameIp
     };
 };

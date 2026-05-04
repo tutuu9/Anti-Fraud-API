@@ -80,3 +80,17 @@ export const getRecentEventsByUserId = async (
     });
 };
 
+export const countUniqueUsersByIp = async (ip: string) => {
+    const events = await prisma.event.findMany({
+        where: {
+            ip
+        },
+        select: {
+            userId: true
+        }
+    });
+    const uniqueUserIds = new Set(
+        events.map((event) => event.userId)
+    );
+    return uniqueUserIds.size;
+};

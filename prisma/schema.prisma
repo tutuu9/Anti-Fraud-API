@@ -21,3 +21,11 @@ model Event {
   phone     String?
   createdAt DateTime @default(now())
 }
+
+model RiskCheck {
+  id        String   @id @default(uuid())
+  userId    String
+  riskScore Int
+  reasons   String[]
+  createdAt DateTime @default(now())
+}

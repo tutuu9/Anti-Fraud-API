@@ -1,6 +1,7 @@
 import { getEventsByUserId, getRecentEventsByUserId, countUniqueUsersByIp } from './event.service';
 import { isSuspiciousIp } from './ipRisk.service';
 import { RISK_CONFIG } from '../config/risk.config';
+import { createRiskCheck } from './riskCheck.service';
 
 export const calculateUserRisk = async (userId: string) => {
     const events = await getEventsByUserId(userId);
@@ -55,13 +56,21 @@ export const calculateUserRisk = async (userId: string) => {
     }
 
 
-    return {
+    const riskResult = {
         userId,
         eventsCount,
         recentEventsCount,
         hasSuspiciousIp,
+        maxUsersFromSameIp,
         riskScore,
-        reasons,
-        maxUsersFromSameIp
+        reasons
     };
+
+    await createRiskCheck({
+        userId: riskResult.userId,
+        riskScore: riskResult.riskScore,
+        reasons: riskResult.reasons
+    });
+
+    return riskResult;
 };

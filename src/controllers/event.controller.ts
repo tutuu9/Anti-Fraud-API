@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { createEvent, getEvents, getEventsByUserId, countEvents } from '../services/event.service';
+import { getPaginationParams } from '../utils/pagination';
 
 export const createEventController = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -18,9 +19,10 @@ export const createEventController = async (req: Request, res: Response, next: N
 
 export const getEventsController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const page = Math.max(Number(req.query.page) || 1, 1);
-
-        const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
+        const { page, limit } = getPaginationParams(
+            req.query.page,
+            req.query.limit
+        );
 
         const totalEvents = await countEvents();
         const totalPages = Math.ceil(totalEvents / limit);

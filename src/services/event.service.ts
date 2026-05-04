@@ -3,6 +3,12 @@ import { prisma } from '../config/prisma';
 
 type CreateEventData = Omit<UserEvent, 'id' | 'createdAt'>;
 
+type EventFilters = {
+    userId?: string;
+    type?: string;
+    ip?: string;
+};
+
 export const createEvent = async (data: CreateEventData) => {
     const newEvent = await prisma.event.create({
         data: {
@@ -17,10 +23,19 @@ export const createEvent = async (data: CreateEventData) => {
     return newEvent;
 };
 
-export const getEvents = async (page: number, limit: number) => {
+export const getEvents = async (
+    page: number,
+    limit: number,
+    filters: EventFilters
+) => {
     const skip = (page - 1) * limit;
 
     return prisma.event.findMany({
+        where: {
+            userId: filters.userId,
+            type: filters.type,
+            ip: filters.ip
+        },
         skip,
         take: limit,
         orderBy: {
@@ -29,8 +44,14 @@ export const getEvents = async (page: number, limit: number) => {
     });
 };
 
-export const countEvents = async () => {
-    return prisma.event.count();
+export const countEvents = async (filters: EventFilters) => {
+    return prisma.event.count({
+        where: {
+            userId: filters.userId,
+            type: filters.type,
+            ip: filters.ip
+        }
+    });
 };
 
 export const getEventsByUserId = async (userId: string) => {

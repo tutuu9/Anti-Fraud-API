@@ -23,11 +23,16 @@ export const getEventsController = async (req: Request, res: Response, next: Nex
             req.query.page,
             req.query.limit
         );
+        const filters = {
+            userId: req.query.userId as string | undefined,
+            type: req.query.type as string | undefined,
+            ip: req.query.ip as string | undefined
+        };
 
-        const totalEvents = await countEvents();
+        const totalEvents = await countEvents(filters);
         const totalPages = Math.ceil(totalEvents / limit);
 
-        const events = await getEvents(page, limit);
+        const events = await getEvents(page, limit, filters);
 
         res.status(200).json({
             status: 'success',

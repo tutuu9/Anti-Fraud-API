@@ -17,3 +17,14 @@ export const createRiskCheck = async (data: CreateRiskCheckData) => {
 
     return riskCheck;
 };
+
+export const getRiskChecksByUserId = async (userId: string) => {
+    return prisma.riskCheck.findMany({
+        where: {
+            userId: userId
+        },
+        orderBy: {
+            createdAt: 'desc'
+        }
+    });
+};

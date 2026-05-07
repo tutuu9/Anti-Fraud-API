@@ -86,6 +86,53 @@ The server will run on:
 http://localhost:5000
 ```
 
+## Docker
+
+You can run the project with Docker Compose.
+
+Build and start the API with PostgreSQL:
+
+```bash
+docker compose up --build
+```
+
+The API will be available at:
+
+```txt
+http://localhost:5000
+```
+
+Swagger documentation:
+
+```txt
+http://localhost:5000/api-docs
+```
+
+PostgreSQL inside Docker is exposed on:
+
+```txt
+localhost:5433
+```
+
+Docker services:
+
+```txt
+app       - Node.js API
+postgres  - PostgreSQL database
+```
+
+Stop containers:
+
+```bash
+docker compose down
+```
+
+Stop containers and remove database volume:
+
+```bash
+docker compose down -v
+```
+
 ## API Endpoints
 
 ### Health Check
